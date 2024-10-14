@@ -1,53 +1,57 @@
-
-
-const calculateTotalTargt = (startDate,endDate,annual) =>{
-
-    const perMonth = annual/12;
-
-    const monthsDefference = endDate.getMonth() - startDate.getMonth();
-    const yearsDifference =  endDate.getYear() - startDate.getYear();
-    const totalMonths = Math.abs(yearsDifference*12 + monthsDefference);
-    let totalAllTarget= {};
-    
-    let CountFriday = 0;
-    const daysOfAnyMonth = [];
-
-    //loop counting total day of any Month
-    for(let i = 1; i <= totalMonths; i++){
-        const daysInMonth = new Date(startDate.getYear(), startDate.getMonth()+i, 0).getDate();
-    
-        
-        for(let day = 1; day <=daysInMonth; day++){
-            const currentDate = new Date(startDate.getYear(), startDate.getMonth()+i,day);
-            // console.log(currentDate);
-          
-            //loop counting fridays of each month
-            if(currentDate.getDay() === 5){
-
-               CountFriday ++;
-            }     
-            }
-           
-        //adding days to array with out friday
-        daysOfAnyMonth.push(daysInMonth - CountFriday);
-        CountFriday = 0;
+const calculateTotalTarget = (startDate, endDate, annual) => {
+    const perMonth = annual / 12;
+  
+    // Calculate the total number of months (inclusive)
+    const monthsDifference = 
+      (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+      (endDate.getMonth() - startDate.getMonth()) + 1; // +1 to include last month
+  
+    let totalAllTarget = {};
+    let daysOfAnyMonth = [];
+    let monthlyTarget = [];
+  
+    // Loop through each month from startDate to endDate (inclusive)
+    for (let i = 0; i < monthsDifference; i++) {
+      // Calculate the current month we're processing
+      const currentDate = new Date(
+        startDate.getFullYear(),
+        startDate.getMonth() + i,
+        1
+      );
+      const daysInMonth = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() + 1,
+        0
+      ).getDate(); // Get the last day of the current month
+  
+      // Count the number of Fridays in the current month
+      let countFridays = 0;
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth(),
+          day
+        );
+        if (date.getDay() === 5) countFridays++;
+      }
+  
+      // Store the days excluding Fridays
+      const workingDays = daysInMonth - countFridays;
+      daysOfAnyMonth.push(workingDays);
+  
+      // Calculate the monthly target excluding Fridays
+      const perDayTarget = perMonth / workingDays;
+      monthlyTarget.push(perDayTarget * workingDays);
     }
-
-    const monthlyTarget =[]
-    daysOfAnyMonth.forEach(month =>{
-       const perDay = perMonth/month;
-        monthlyTarget.push(perDay*month);
-        // console.log(` ${perDay}$`);
-        
-    })
-
-    totalAllTarget.dayasExcludingfridays = daysOfAnyMonth;
-    totalAllTarget.dayasWorkedExcludingfridays = daysOfAnyMonth;
+  
+    // Store results in totalAllTarget object
+    totalAllTarget.daysExcludingFridays = daysOfAnyMonth;
+    totalAllTarget.daysWorkedExcludingFridays = daysOfAnyMonth;
     totalAllTarget.monthlyTarget = monthlyTarget;
+  
     console.log(totalAllTarget);
-}
-
-
-calculateTotalTargt(new Date("2024-1-1"),new Date("2024-3-31"),5220)
-
-
+  };
+  
+  // Example usage
+  calculateTotalTarget(new Date("2024-01-01"), new Date("2024-03-31"), 5220);
+  
